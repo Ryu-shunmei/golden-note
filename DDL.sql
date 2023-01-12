@@ -1,22 +1,12 @@
 -- Project Name : fastapi-auth-demo
--- Date/Time    : 2023/01/12 21:13:10
+-- Date/Time    : 2023/01/12 21:16:35
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
 
-/*
-  << 注意！！ >>
-  BackupToTempTable, RestoreFromTempTable疑似命令が付加されています。
-  これにより、drop table, create table 後もデータが残ります。
-  この機能は一時的に $$TableName のような一時テーブルを作成します。
-  この機能は A5:SQL Mk-2でのみ有効であることに注意してください。
-*/
-
 -- 性別マスター
---* BackupToTempTable
 drop table if exists gender_master cascade;
 
---* RestoreFromTempTable
 create table gender_master (
   gender char(1) not null
   , mark varchar(100) not null
@@ -24,10 +14,8 @@ create table gender_master (
 ) ;
 
 -- パスワード履歴
---* BackupToTempTable
 drop table if exists password_histories cascade;
 
---* RestoreFromTempTable
 create table password_histories (
   user_id bigint not null
   , number integer not null
@@ -36,10 +24,8 @@ create table password_histories (
 ) ;
 
 -- ユーザースターテスマスター
---* BackupToTempTable
 drop table if exists user_status_master cascade;
 
---* RestoreFromTempTable
 create table user_status_master (
   status char(1) not null
   , mark varchar(100) not null
@@ -47,10 +33,8 @@ create table user_status_master (
 ) ;
 
 -- 検証コードタイプマスター
---* BackupToTempTable
 drop table if exists verification_code_type_master cascade;
 
---* RestoreFromTempTable
 create table verification_code_type_master (
   type char(1) not null
   , mark varchar(512) not null
@@ -59,10 +43,8 @@ create table verification_code_type_master (
 ) ;
 
 -- 検証コード
---* BackupToTempTable
 drop table if exists verification_codes cascade;
 
---* RestoreFromTempTable
 create table verification_codes (
   id bigserial not null
   , user_id bigint not null
@@ -72,10 +54,8 @@ create table verification_codes (
 ) ;
 
 -- ユーザー情報
---* BackupToTempTable
 drop table if exists user_infos cascade;
 
---* RestoreFromTempTable
 create table user_infos (
   user_id bigint not null
   , gender char(1) not null
@@ -84,10 +64,8 @@ create table user_infos (
 ) ;
 
 -- ユーザー
---* BackupToTempTable
 drop table if exists users cascade;
 
---* RestoreFromTempTable
 create table users (
   id bigserial not null
   , email varchar(512) not null

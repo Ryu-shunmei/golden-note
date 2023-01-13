@@ -1,8 +1,22 @@
 -- Project Name : kao_health
--- Date/Time    : 2023/01/13 14:45:38
+-- Date/Time    : 2023/01/13 14:55:06
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
+
+-- アンケートC
+drop table if exists questionary_c cascade;
+
+create table questionary_c (
+  id bigint not null
+  , question varchar(512) not null
+  , mark varchar(512) not null
+  , answer_list text not null
+  , type varchar(100) not null
+  , created timestamp not null
+  , updated timestamp not null
+  , constraint questionary_c_PKC primary key (id)
+) ;
 
 -- 検証コードタイプマスター
 drop table if exists verification_code_type_master cascade;
@@ -179,6 +193,15 @@ alter table companies
 
 alter table user_base_infos
   add constraint user_base_infos_FK1 foreign key (user_id) references users(id);
+
+comment on table questionary_c is 'アンケートC';
+comment on column questionary_c.id is 'ID';
+comment on column questionary_c.question is '質問';
+comment on column questionary_c.mark is 'マーク';
+comment on column questionary_c.answer_list is '回答リスト';
+comment on column questionary_c.type is 'タイプ';
+comment on column questionary_c.created is '作成日付';
+comment on column questionary_c.updated is '更新日付';
 
 comment on table verification_code_type_master is '検証コードタイプマスター';
 comment on column verification_code_type_master.code is 'コード';

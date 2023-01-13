@@ -1,5 +1,5 @@
 -- Project Name : kao_health
--- Date/Time    : 2023/01/13 13:19:04
+-- Date/Time    : 2023/01/13 13:31:51
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -10,21 +10,21 @@ drop table if exists user_health_infos cascade;
 create table user_health_infos (
   id bigserial not null
   , user_id bigint not null
-  , sbp  numeric(3) not null
-  , dbp numeric(3) not null
-  , fbp numeric(3) not null
-  , us varchar(10) not null
-  , cc numeric(3) not null
-  , triglyceride numeric(3)
-  , hdl numeric(3)
-  , idl numeric(3)
-  , got numeric(3)
-  , gpt numeric(3)
-  , ggp numeric(3)
-  , rbc numeric(3)
-  , tc numeric(3)
-  , up numeric(3)
-  , hemoglobin numeric(4,1)
+  , sbp numeric(3,1) not null
+  , dbp numeric(3,1) not null
+  , fbp numeric(3,1) not null
+  , us varchar(100) not null
+  , cc numeric(3,1) not null
+  , triglyceride numeric(3,1)
+  , hdl numeric(3,1)
+  , idl numeric(3,1)
+  , got numeric(3,1)
+  , gpt numeric(3,1)
+  , ggp numeric(3,1)
+  , rbc numeric(3,1)
+  , tc numeric(3,1)
+  , up numeric(3,1)
+  , hemoglobin numeric(3,1)
   , created timestamp not null
   , updated timestamp not null
   , constraint user_health_infos_PKC primary key (id)
@@ -72,12 +72,12 @@ create table health_assets (
   , rank bigint
   , asset_sum numeric(10,2)
   , std_med_cost numeric(10,2)
-  , bmi numeric(3)
-  , std_bmi numeric(3)
+  , bmi numeric(3,1)
+  , std_bmi numeric(3,1)
   , body_fat_percent varchar(100)
   , calories_burned integer
-  , std_contraction_blood_pressure numeric(3)
-  , std_diastolic_blood_pressure numeric(3)
+  , std_contraction_blood_pressure numeric(3,1)
+  , std_diastolic_blood_pressure numeric(3,1)
   , status char(1) not null
   , created timestamp not null
   , updated timestamp not null

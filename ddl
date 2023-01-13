@@ -1,5 +1,5 @@
 -- Project Name : kao_health
--- Date/Time    : 2023/01/13 14:55:06
+-- Date/Time    : 2023/01/13 15:22:08
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -164,11 +164,8 @@ create table users (
   , constraint users_PKC primary key (id)
 ) ;
 
-create unique index verification_code_IX1
+create index verification_code_IX1
   on verification_code(type);
-
-alter table verification_code_type_master
-  add constraint verification_code_type_master_FK1 foreign key (code) references verification_code(type);
 
 alter table user_health_infos
   add constraint user_health_infos_FK1 foreign key (user_id) references users(id);

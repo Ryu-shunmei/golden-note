@@ -1,8 +1,19 @@
 -- Project Name : kao_health
--- Date/Time    : 2023/01/13 13:31:51
+-- Date/Time    : 2023/01/13 14:44:39
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
+
+-- 検証コードタイプマスター
+drop table if exists verification_code_type_master cascade;
+
+create table verification_code_type_master (
+  code char(1) not null
+  , mark varchar(512) not null
+  , created timestamp not null
+  , updated timestamp not null
+  , constraint verification_code_type_master_PKC primary key (code)
+) ;
 
 -- ユーザー健康情報
 drop table if exists user_health_infos cascade;
@@ -91,6 +102,7 @@ create table verification_code (
   id bigserial not null
   , user_id bigint not null
   , code varchar(36) not null
+  , type char(1) not null
   , created timestamp not null
   , updated timestamp not null
   , constraint verification_code_PKC primary key (id)
@@ -138,6 +150,12 @@ create table users (
   , constraint users_PKC primary key (id)
 ) ;
 
+create unique index verification_code_IX1
+  on verification_code(type);
+
+alter table verification_code_type_master
+  add constraint verification_code_type_master_FK1 foreign key (code) references verification_code(type);
+
 alter table user_health_infos
   add constraint user_health_infos_FK1 foreign key (user_id) references users(id);
 
@@ -161,6 +179,12 @@ alter table companies
 
 alter table user_base_infos
   add constraint user_base_infos_FK1 foreign key (user_id) references users(id);
+
+comment on table verification_code_type_master is '検証コードタイプマスター';
+comment on column verification_code_type_master.code is 'コード';
+comment on column verification_code_type_master.mark is 'マーク';
+comment on column verification_code_type_master.created is '作成日付';
+comment on column verification_code_type_master.updated is '更新日付';
 
 comment on table user_health_infos is 'ユーザー健康情報';
 comment on column user_health_infos.id is 'ID';
@@ -221,6 +245,7 @@ comment on table verification_code is '検証コード';
 comment on column verification_code.id is 'ID';
 comment on column verification_code.user_id is 'ユーザーID';
 comment on column verification_code.code is 'コード';
+comment on column verification_code.type is 'タイプ';
 comment on column verification_code.created is '作成日付';
 comment on column verification_code.updated is '更新日付';
 

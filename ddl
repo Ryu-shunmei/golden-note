@@ -1,5 +1,5 @@
 -- Project Name : kao_health
--- Date/Time    : 2023/01/13 14:44:39
+-- Date/Time    : 2023/01/13 14:45:38
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -143,7 +143,7 @@ create table users (
   id bigserial not null
   , user_name varchar(100)
   , email varchar(512)
-  , password varchar(512) not null
+  , password varchar(512)
   , status char(1) not null
   , created timestamp not null
   , updated timestamp not null

@@ -1,5 +1,5 @@
 -- Project Name : 健康資産API
--- Date/Time    : 2023/01/14 18:08:52
+-- Date/Time    : 2023/01/14 18:28:01
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -270,23 +270,68 @@ create table users (
 create unique index user_health_infos_IX1
   on user_health_infos(up);
 
+alter table up_master
+  add constraint up_master_FK1 foreign key (up) references user_health_infos(up);
+
 create unique index user_health_infos_IX2
   on user_health_infos(us);
+
+alter table us_master
+  add constraint us_master_FK1 foreign key (us) references user_health_infos(us);
 
 create unique index calc_histories_IX1
   on calc_histories(status);
 
+alter table calc_status_master
+  add constraint calc_status_master_FK1 foreign key (status) references calc_histories(status);
+
+alter table user_health_infos
+  add constraint user_health_infos_FK1 foreign key (user_id) references users(id);
+
+alter table calc_histories
+  add constraint calc_histories_FK1 foreign key (user_id) references users(id);
+
+alter table health_assets
+  add constraint health_assets_FK1 foreign key (user_id) references users(id);
+
+alter table questionary_answers
+  add constraint questionary_answers_FK1 foreign key (user_id) references users(id);
+
 create unique index supplementaries_IX1
   on supplementaries(company);
+
+alter table company_master
+  add constraint company_master_FK1 foreign key (id) references supplementaries(company);
+
+alter table supplementaries
+  add constraint supplementaries_FK1 foreign key (user_id) references users(id);
 
 create unique index user_infos_IX1
   on user_infos(gender);
 
+alter table gender_master
+  add constraint gender_master_FK1 foreign key (gender) references user_infos(gender);
+
+alter table password_histories
+  add constraint password_histories_FK1 foreign key (user_id) references users(id);
+
 create unique index users_IX1
   on users(status);
 
+alter table user_status_master
+  add constraint user_status_master_FK1 foreign key (status) references users(status);
+
 create unique index verification_codes_IX1
   on verification_codes(type);
+
+alter table verification_code_type_master
+  add constraint verification_code_type_master_FK1 foreign key (type) references verification_codes(type);
+
+alter table verification_codes
+  add constraint verification_codes_FK1 foreign key (user_id) references users(id);
+
+alter table user_infos
+  add constraint user_infos_FK1 foreign key (user_id) references users(id);
 
 comment on table calc_status_master is '計算スターテスマスター';
 comment on column calc_status_master.status is 'スターテス';

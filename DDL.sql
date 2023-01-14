@@ -1,5 +1,5 @@
 -- Project Name : 健康資産API
--- Date/Time    : 2023/01/15 0:30:52
+-- Date/Time    : 2023/01/15 0:58:04
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -52,7 +52,8 @@ create table name_map (
 drop table if exists user_health_infos cascade;
 
 create table user_health_infos (
-  user_id bigint not null
+  id bigserial not null
+  , user_id bigint not null
   , sbp numeric(4,1) not null
   , dbp numeric(4,1) not null
   , fbp numeric(4,1) not null
@@ -70,27 +71,29 @@ create table user_health_infos (
   , hemoglobin numeric(4,1)
   , created timestamp not null
   , updated timestamp not null
-  , constraint user_health_infos_PKC primary key (user_id)
+  , constraint user_health_infos_PKC primary key (id)
 ) ;
 
 -- 計算履歴
 drop table if exists calc_histories cascade;
 
 create table calc_histories (
-  user_id bigint not null
-  , type bigint not null
+  id bigserial not null
+  , user_id bigint not null
   , input text not null
+  , type bigint not null
   , status char(1) not null
   , created timestamp not null
   , updated timestamp not null
-  , constraint calc_histories_PKC primary key (user_id)
+  , constraint calc_histories_PKC primary key (id)
 ) ;
 
 -- 健康資産
 drop table if exists health_assets cascade;
 
 create table health_assets (
-  user_id bigint not null
+  id bigserial not null
+  , user_id bigint not null
   , rank bigint not null
   , health_asset_amount bigint not null
   , bmi numeric(4,1)
@@ -103,7 +106,7 @@ create table health_assets (
   , std_diastolic_blood_pressure numeric(4,1)
   , created timestamp not null
   , updated timestamp not null
-  , constraint health_assets_PKC primary key (user_id)
+  , constraint health_assets_PKC primary key (id)
 ) ;
 
 -- ランクマスター
@@ -159,27 +162,17 @@ create table initial_questionnaire (
   , constraint initial_questionnaire_PKC primary key (id)
 ) ;
 
--- 会社マスター
-drop table if exists company_master cascade;
+-- 会社
+drop table if exists companies cascade;
 
-create table company_master (
+create table companies (
   id bigserial not null
+  , user_id bigint not null
   , name varchar(512) not null
   , address varchar(1024)
   , created timestamp not null
   , updated timestamp not null
-  , constraint company_master_PKC primary key (id)
-) ;
-
--- サプリメント
-drop table if exists supplementaries cascade;
-
-create table supplementaries (
-  user_id bigint not null
-  , company bigint not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint supplementaries_PKC primary key (user_id)
+  , constraint companies_PKC primary key (id)
 ) ;
 
 -- 性別マスター
@@ -245,14 +238,15 @@ create table verify_codes (
 drop table if exists user_infos cascade;
 
 create table user_infos (
-  user_id bigint not null
+  id bigserial not null
+  , user_id bigint not null
   , height numeric(4,1) not null
   , weight numeric(4,1) not null
   , gender char(1) not null
   , birth_date date not null
   , created timestamp not null
   , updated timestamp not null
-  , constraint user_infos_PKC primary key (user_id)
+  , constraint user_infos_PKC primary key (id)
 ) ;
 
 -- ユーザー
@@ -260,13 +254,16 @@ drop table if exists users cascade;
 
 create table users (
   id bigserial not null
-  , user_name varchar(100)
   , email varchar(512)
+  , user_name varchar(100)
   , status char(1) not null
   , created timestamp not null
   , updated timestamp not null
   , constraint users_PKC primary key (id)
 ) ;
+
+alter table companies
+  add constraint companies_FK1 foreign key (user_id) references users(id);
 
 create index user_health_infos_IX1
   on user_health_infos(up);
@@ -289,23 +286,14 @@ alter table health_assets
 alter table questionary_answers
   add constraint questionary_answers_FK1 foreign key (user_id) references users(id);
 
-create index supplementaries_IX1
-  on supplementaries(company);
-
-alter table supplementaries
-  add constraint supplementaries_FK1 foreign key (user_id) references users(id);
-
 create index user_infos_IX1
   on user_infos(gender);
 
 alter table password_histories
   add constraint password_histories_FK1 foreign key (user_id) references users(id);
 
-create unique index users_IX1
+create index users_IX1
   on users(status);
-
-alter table user_status_master
-  add constraint user_status_master_FK1 foreign key (status) references users(status);
 
 create index verify_codes_IX1
   on verify_codes(type);
@@ -341,6 +329,7 @@ comment on column name_map.created is '作成日付';
 comment on column name_map.updated is '更新日付';
 
 comment on table user_health_infos is 'ユーザー健康情報';
+comment on column user_health_infos.id is 'ID';
 comment on column user_health_infos.user_id is 'ユーザーID';
 comment on column user_health_infos.sbp is '収縮期血圧';
 comment on column user_health_infos.dbp is '拡張期血圧';
@@ -361,14 +350,16 @@ comment on column user_health_infos.created is '作成日付';
 comment on column user_health_infos.updated is '更新日付';
 
 comment on table calc_histories is '計算履歴';
+comment on column calc_histories.id is 'ID';
 comment on column calc_histories.user_id is 'ユーザーID';
-comment on column calc_histories.type is 'タイプ';
 comment on column calc_histories.input is '入力';
+comment on column calc_histories.type is 'タイプ';
 comment on column calc_histories.status is 'スターテス';
 comment on column calc_histories.created is '作成日付';
 comment on column calc_histories.updated is '更新日付';
 
 comment on table health_assets is '健康資産';
+comment on column health_assets.id is 'ID';
 comment on column health_assets.user_id is 'ユーザーID';
 comment on column health_assets.rank is 'ランク';
 comment on column health_assets.health_asset_amount is '健康資産額';
@@ -416,18 +407,13 @@ comment on column initial_questionnaire.type is 'タイプ';
 comment on column initial_questionnaire.created is '作成日付';
 comment on column initial_questionnaire.updated is '更新日付';
 
-comment on table company_master is '会社マスター';
-comment on column company_master.id is 'ID';
-comment on column company_master.name is '名称';
-comment on column company_master.address is '所在地';
-comment on column company_master.created is '作成日付';
-comment on column company_master.updated is '更新日付';
-
-comment on table supplementaries is 'サプリメント';
-comment on column supplementaries.user_id is 'ユーザーID';
-comment on column supplementaries.company is '会社';
-comment on column supplementaries.created is '作成日付';
-comment on column supplementaries.updated is '更新日付';
+comment on table companies is '会社';
+comment on column companies.id is 'ID';
+comment on column companies.user_id is 'ユーザーID';
+comment on column companies.name is '名称';
+comment on column companies.address is '所在地';
+comment on column companies.created is '作成日付';
+comment on column companies.updated is '更新日付';
 
 comment on table gender_master is '性別マスター';
 comment on column gender_master.gender is '性別';
@@ -464,6 +450,7 @@ comment on column verify_codes.created is '作成日付';
 comment on column verify_codes.updated is '更新日付';
 
 comment on table user_infos is 'ユーザー情報';
+comment on column user_infos.id is 'ID';
 comment on column user_infos.user_id is 'ユーザーID';
 comment on column user_infos.height is '身長';
 comment on column user_infos.weight is '体重';
@@ -474,8 +461,8 @@ comment on column user_infos.updated is '更新日付';
 
 comment on table users is 'ユーザー';
 comment on column users.id is 'ID';
-comment on column users.user_name is 'ユーザー名';
 comment on column users.email is 'メール';
+comment on column users.user_name is 'ユーザー名';
 comment on column users.status is 'スターテス';
 comment on column users.created is '作成日付';
 comment on column users.updated is '更新日付';

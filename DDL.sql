@@ -1,5 +1,5 @@
 -- Project Name : 健康資産API
--- Date/Time    : 2023/01/14 18:28:01
+-- Date/Time    : 2023/01/15 0:30:52
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -217,28 +217,28 @@ create table user_status_master (
 ) ;
 
 -- 検証コードタイプマスター
-drop table if exists verification_code_type_master cascade;
+drop table if exists verify_code_type_master cascade;
 
-create table verification_code_type_master (
+create table verify_code_type_master (
   type char(1) not null
   , mark varchar(512) not null
   , timedelta integer not null
   , created timestamp not null
   , updated timestamp not null
-  , constraint verification_code_type_master_PKC primary key (type)
+  , constraint verify_code_type_master_PKC primary key (type)
 ) ;
 
 -- 検証コード
-drop table if exists verification_codes cascade;
+drop table if exists verify_codes cascade;
 
-create table verification_codes (
+create table verify_codes (
   id bigserial not null
   , user_id bigint not null
   , type char(1) not null
   , code varchar(6) not null
   , created timestamp not null
   , updated timestamp not null
-  , constraint verification_codes_PKC primary key (id)
+  , constraint verify_codes_PKC primary key (id)
 ) ;
 
 -- ユーザー情報
@@ -260,30 +260,22 @@ drop table if exists users cascade;
 
 create table users (
   id bigserial not null
-  , email varchar(512) not null
+  , user_name varchar(100)
+  , email varchar(512)
   , status char(1) not null
   , created timestamp not null
   , updated timestamp not null
   , constraint users_PKC primary key (id)
 ) ;
 
-create unique index user_health_infos_IX1
+create index user_health_infos_IX1
   on user_health_infos(up);
 
-alter table up_master
-  add constraint up_master_FK1 foreign key (up) references user_health_infos(up);
-
-create unique index user_health_infos_IX2
+create index user_health_infos_IX2
   on user_health_infos(us);
 
-alter table us_master
-  add constraint us_master_FK1 foreign key (us) references user_health_infos(us);
-
-create unique index calc_histories_IX1
+create index calc_histories_IX1
   on calc_histories(status);
-
-alter table calc_status_master
-  add constraint calc_status_master_FK1 foreign key (status) references calc_histories(status);
 
 alter table user_health_infos
   add constraint user_health_infos_FK1 foreign key (user_id) references users(id);
@@ -297,20 +289,14 @@ alter table health_assets
 alter table questionary_answers
   add constraint questionary_answers_FK1 foreign key (user_id) references users(id);
 
-create unique index supplementaries_IX1
+create index supplementaries_IX1
   on supplementaries(company);
-
-alter table company_master
-  add constraint company_master_FK1 foreign key (id) references supplementaries(company);
 
 alter table supplementaries
   add constraint supplementaries_FK1 foreign key (user_id) references users(id);
 
-create unique index user_infos_IX1
+create index user_infos_IX1
   on user_infos(gender);
-
-alter table gender_master
-  add constraint gender_master_FK1 foreign key (gender) references user_infos(gender);
 
 alter table password_histories
   add constraint password_histories_FK1 foreign key (user_id) references users(id);
@@ -321,14 +307,11 @@ create unique index users_IX1
 alter table user_status_master
   add constraint user_status_master_FK1 foreign key (status) references users(status);
 
-create unique index verification_codes_IX1
-  on verification_codes(type);
+create index verify_codes_IX1
+  on verify_codes(type);
 
-alter table verification_code_type_master
-  add constraint verification_code_type_master_FK1 foreign key (type) references verification_codes(type);
-
-alter table verification_codes
-  add constraint verification_codes_FK1 foreign key (user_id) references users(id);
+alter table verify_codes
+  add constraint verify_codes_FK1 foreign key (user_id) references users(id);
 
 alter table user_infos
   add constraint user_infos_FK1 foreign key (user_id) references users(id);
@@ -465,20 +448,20 @@ comment on column user_status_master.mark is 'マーク';
 comment on column user_status_master.created is '作成日付';
 comment on column user_status_master.updated is '更新日付';
 
-comment on table verification_code_type_master is '検証コードタイプマスター';
-comment on column verification_code_type_master.type is 'タイプ';
-comment on column verification_code_type_master.mark is 'マーク';
-comment on column verification_code_type_master.timedelta is 'タイムデルタ';
-comment on column verification_code_type_master.created is '作成日付';
-comment on column verification_code_type_master.updated is '更新日付';
+comment on table verify_code_type_master is '検証コードタイプマスター';
+comment on column verify_code_type_master.type is 'タイプ';
+comment on column verify_code_type_master.mark is 'マーク';
+comment on column verify_code_type_master.timedelta is 'タイムデルタ';
+comment on column verify_code_type_master.created is '作成日付';
+comment on column verify_code_type_master.updated is '更新日付';
 
-comment on table verification_codes is '検証コード';
-comment on column verification_codes.id is 'ID';
-comment on column verification_codes.user_id is 'ユーザーID';
-comment on column verification_codes.type is 'タイプ';
-comment on column verification_codes.code is 'コード';
-comment on column verification_codes.created is '作成日付';
-comment on column verification_codes.updated is '更新日付';
+comment on table verify_codes is '検証コード';
+comment on column verify_codes.id is 'ID';
+comment on column verify_codes.user_id is 'ユーザーID';
+comment on column verify_codes.type is 'タイプ';
+comment on column verify_codes.code is 'コード';
+comment on column verify_codes.created is '作成日付';
+comment on column verify_codes.updated is '更新日付';
 
 comment on table user_infos is 'ユーザー情報';
 comment on column user_infos.user_id is 'ユーザーID';
@@ -491,6 +474,7 @@ comment on column user_infos.updated is '更新日付';
 
 comment on table users is 'ユーザー';
 comment on column users.id is 'ID';
+comment on column users.user_name is 'ユーザー名';
 comment on column users.email is 'メール';
 comment on column users.status is 'スターテス';
 comment on column users.created is '作成日付';

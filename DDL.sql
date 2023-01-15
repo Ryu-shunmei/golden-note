@@ -1,8 +1,20 @@
 -- Project Name : 健康資産API
--- Date/Time    : 2023/01/15 0:58:04
+-- Date/Time    : 2023/01/15 13:14:05
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
+
+-- アンケートタイプマスター
+drop table if exists questionary_type_master cascade;
+
+create table questionary_type_master (
+  type char(1) not null
+  , mark varchar(512) not null
+  , timedelta integer not null
+  , created timestamp not null
+  , updated timestamp not null
+  , constraint questionary_type_master_PKC primary key (type)
+) ;
 
 -- 計算スターテスマスター
 drop table if exists calc_status_master cascade;
@@ -148,18 +160,19 @@ create table rank_histogram (
   , constraint rank_histogram_PKC primary key (id)
 ) ;
 
--- 初回アンケート
-drop table if exists initial_questionnaire cascade;
+-- アンケート
+drop table if exists questionnaires cascade;
 
-create table initial_questionnaire (
+create table questionnaires (
   id bigint not null
+  , type char(1) not null
   , question varchar(512) not null
   , mark varchar(512) not null
   , answer_list text not null
-  , type varchar(100) not null
+  , answer_type varchar(100) not null
   , created timestamp not null
   , updated timestamp not null
-  , constraint initial_questionnaire_PKC primary key (id)
+  , constraint questionnaires_PKC primary key (id)
 ) ;
 
 -- 会社
@@ -262,6 +275,12 @@ create table users (
   , constraint users_PKC primary key (id)
 ) ;
 
+create index questionnaires_IX1
+  on questionnaires(type);
+
+create index questionary_answers_IX1
+  on questionary_answers(type);
+
 alter table companies
   add constraint companies_FK1 foreign key (user_id) references users(id);
 
@@ -303,6 +322,13 @@ alter table verify_codes
 
 alter table user_infos
   add constraint user_infos_FK1 foreign key (user_id) references users(id);
+
+comment on table questionary_type_master is 'アンケートタイプマスター';
+comment on column questionary_type_master.type is 'タイプ';
+comment on column questionary_type_master.mark is 'マーク';
+comment on column questionary_type_master.timedelta is 'タイムデルタ';
+comment on column questionary_type_master.created is '作成日付';
+comment on column questionary_type_master.updated is '更新日付';
 
 comment on table calc_status_master is '計算スターテスマスター';
 comment on column calc_status_master.status is 'スターテス';
@@ -398,14 +424,15 @@ comment on column rank_histogram.count is 'カウント';
 comment on column rank_histogram.created is '作成日付';
 comment on column rank_histogram.updated is '更新日付';
 
-comment on table initial_questionnaire is '初回アンケート';
-comment on column initial_questionnaire.id is 'ID';
-comment on column initial_questionnaire.question is '質問';
-comment on column initial_questionnaire.mark is 'マーク';
-comment on column initial_questionnaire.answer_list is '回答リスト';
-comment on column initial_questionnaire.type is 'タイプ';
-comment on column initial_questionnaire.created is '作成日付';
-comment on column initial_questionnaire.updated is '更新日付';
+comment on table questionnaires is 'アンケート';
+comment on column questionnaires.id is 'ID';
+comment on column questionnaires.type is 'タイプ';
+comment on column questionnaires.question is '質問';
+comment on column questionnaires.mark is 'マーク';
+comment on column questionnaires.answer_list is '回答リスト';
+comment on column questionnaires.answer_type is '回答タイプ';
+comment on column questionnaires.created is '作成日付';
+comment on column questionnaires.updated is '更新日付';
 
 comment on table companies is '会社';
 comment on column companies.id is 'ID';

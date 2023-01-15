@@ -1,5 +1,5 @@
 -- Project Name : 健康資産API
--- Date/Time    : 2023/01/15 13:14:05
+-- Date/Time    : 2023/01/15 20:40:58
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
@@ -10,7 +10,6 @@ drop table if exists questionary_type_master cascade;
 create table questionary_type_master (
   type char(1) not null
   , mark varchar(512) not null
-  , timedelta integer not null
   , created timestamp not null
   , updated timestamp not null
   , constraint questionary_type_master_PKC primary key (type)
@@ -110,8 +109,8 @@ create table health_assets (
   , health_asset_amount bigint not null
   , bmi numeric(4,1)
   , std_bmi numeric(4,1)
-  , body_fat_percent varchar(100)
-  , calories_burned integer
+  , std_body_fat_percent varchar(100)
+  , std_calories_burned integer
   , contraction_blood_pressure numeric(4,1)
   , diastolic_blood_pressure numeric(4,1)
   , std_contraction_blood_pressure numeric(4,1)
@@ -326,7 +325,6 @@ alter table user_infos
 comment on table questionary_type_master is 'アンケートタイプマスター';
 comment on column questionary_type_master.type is 'タイプ';
 comment on column questionary_type_master.mark is 'マーク';
-comment on column questionary_type_master.timedelta is 'タイムデルタ';
 comment on column questionary_type_master.created is '作成日付';
 comment on column questionary_type_master.updated is '更新日付';
 
@@ -391,8 +389,8 @@ comment on column health_assets.rank is 'ランク';
 comment on column health_assets.health_asset_amount is '健康資産額';
 comment on column health_assets.bmi is 'BMI';
 comment on column health_assets.std_bmi is '標準BMI';
-comment on column health_assets.body_fat_percent is '体脂肪率';
-comment on column health_assets.calories_burned is '消費カロリー';
+comment on column health_assets.std_body_fat_percent is '標準体脂肪率';
+comment on column health_assets.std_calories_burned is '標準消費カロリー';
 comment on column health_assets.contraction_blood_pressure is '収縮期血圧';
 comment on column health_assets.diastolic_blood_pressure is '拡張期血圧';
 comment on column health_assets.std_contraction_blood_pressure is '標準収縮期血圧';

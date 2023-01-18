@@ -1,63 +1,8 @@
 -- Project Name : 健康資産API
--- Date/Time    : 2023/01/15 20:40:58
+-- Date/Time    : 2023/01/18 16:39:39
 -- Author       : 劉　春明
 -- RDBMS Type   : PostgreSQL
 -- Application  : A5:SQL Mk-2
-
--- アンケートタイプマスター
-drop table if exists questionary_type_master cascade;
-
-create table questionary_type_master (
-  type char(1) not null
-  , mark varchar(512) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint questionary_type_master_PKC primary key (type)
-) ;
-
--- 計算スターテスマスター
-drop table if exists calc_status_master cascade;
-
-create table calc_status_master (
-  status char(1) not null
-  , mark varchar(100) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint calc_status_master_PKC primary key (status)
-) ;
-
--- 尿蛋白(定性)マスター
-drop table if exists up_master cascade;
-
-create table up_master (
-  up integer not null
-  , mark varchar(100) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint up_master_PKC primary key (up)
-) ;
-
--- 尿糖マスター
-drop table if exists us_master cascade;
-
-create table us_master (
-  us integer not null
-  , mark varchar(100) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint us_master_PKC primary key (us)
-) ;
-
--- ネームマップ
-drop table if exists name_map cascade;
-
-create table name_map (
-  en varchar(100) not null
-  , jp varchar(100) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint name_map_PKC primary key (en)
-) ;
 
 -- ユーザー健康情報
 drop table if exists user_health_infos cascade;
@@ -188,17 +133,6 @@ create table companies (
   , constraint companies_PKC primary key (id)
 ) ;
 
--- 性別マスター
-drop table if exists gender_master cascade;
-
-create table gender_master (
-  gender char(1) not null
-  , mark varchar(100) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint gender_master_PKC primary key (gender)
-) ;
-
 -- パスワード履歴
 drop table if exists password_histories cascade;
 
@@ -209,29 +143,6 @@ create table password_histories (
   , created timestamp not null
   , updated timestamp not null
   , constraint password_histories_PKC primary key (user_id,number)
-) ;
-
--- ユーザースターテスマスター
-drop table if exists user_status_master cascade;
-
-create table user_status_master (
-  status char(1) not null
-  , mark varchar(100) not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint user_status_master_PKC primary key (status)
-) ;
-
--- 検証コードタイプマスター
-drop table if exists verify_code_type_master cascade;
-
-create table verify_code_type_master (
-  type char(1) not null
-  , mark varchar(512) not null
-  , timedelta integer not null
-  , created timestamp not null
-  , updated timestamp not null
-  , constraint verify_code_type_master_PKC primary key (type)
 ) ;
 
 -- 検証コード
@@ -275,23 +186,8 @@ create table users (
   , constraint users_PKC primary key (id)
 ) ;
 
-create index questionnaires_IX1
-  on questionnaires(type);
-
-create index questionary_answers_IX1
-  on questionary_answers(type);
-
 alter table companies
   add constraint companies_FK1 foreign key (user_id) references users(id);
-
-create index user_health_infos_IX1
-  on user_health_infos(up);
-
-create index user_health_infos_IX2
-  on user_health_infos(us);
-
-create index calc_histories_IX1
-  on calc_histories(status);
 
 alter table user_health_infos
   add constraint user_health_infos_FK1 foreign key (user_id) references users(id);
@@ -305,53 +201,14 @@ alter table health_assets
 alter table questionary_answers
   add constraint questionary_answers_FK1 foreign key (user_id) references users(id);
 
-create index user_infos_IX1
-  on user_infos(gender);
-
 alter table password_histories
   add constraint password_histories_FK1 foreign key (user_id) references users(id);
-
-create index users_IX1
-  on users(status);
-
-create index verify_codes_IX1
-  on verify_codes(type);
 
 alter table verify_codes
   add constraint verify_codes_FK1 foreign key (user_id) references users(id);
 
 alter table user_infos
   add constraint user_infos_FK1 foreign key (user_id) references users(id);
-
-comment on table questionary_type_master is 'アンケートタイプマスター';
-comment on column questionary_type_master.type is 'タイプ';
-comment on column questionary_type_master.mark is 'マーク';
-comment on column questionary_type_master.created is '作成日付';
-comment on column questionary_type_master.updated is '更新日付';
-
-comment on table calc_status_master is '計算スターテスマスター';
-comment on column calc_status_master.status is 'スターテス';
-comment on column calc_status_master.mark is 'マーク';
-comment on column calc_status_master.created is '作成日付';
-comment on column calc_status_master.updated is '更新日付';
-
-comment on table up_master is '尿蛋白(定性)マスター';
-comment on column up_master.up is '尿蛋白(定性)';
-comment on column up_master.mark is 'マーク';
-comment on column up_master.created is '作成日付';
-comment on column up_master.updated is '更新日付';
-
-comment on table us_master is '尿糖マスター';
-comment on column us_master.us is '尿糖';
-comment on column us_master.mark is 'マーク';
-comment on column us_master.created is '作成日付';
-comment on column us_master.updated is '更新日付';
-
-comment on table name_map is 'ネームマップ';
-comment on column name_map.en is 'EN';
-comment on column name_map.jp is 'JP';
-comment on column name_map.created is '作成日付';
-comment on column name_map.updated is '更新日付';
 
 comment on table user_health_infos is 'ユーザー健康情報';
 comment on column user_health_infos.id is 'ID';
@@ -442,31 +299,12 @@ comment on column companies.address is '所在地';
 comment on column companies.created is '作成日付';
 comment on column companies.updated is '更新日付';
 
-comment on table gender_master is '性別マスター';
-comment on column gender_master.gender is '性別';
-comment on column gender_master.mark is 'マーク';
-comment on column gender_master.created is '作成日付';
-comment on column gender_master.updated is '更新日付';
-
 comment on table password_histories is 'パスワード履歴';
 comment on column password_histories.user_id is 'ユーザーID';
 comment on column password_histories.number is '番号';
 comment on column password_histories.password is 'パスワード';
 comment on column password_histories.created is '作成日付';
 comment on column password_histories.updated is '更新日付';
-
-comment on table user_status_master is 'ユーザースターテスマスター';
-comment on column user_status_master.status is 'スターテス';
-comment on column user_status_master.mark is 'マーク';
-comment on column user_status_master.created is '作成日付';
-comment on column user_status_master.updated is '更新日付';
-
-comment on table verify_code_type_master is '検証コードタイプマスター';
-comment on column verify_code_type_master.type is 'タイプ';
-comment on column verify_code_type_master.mark is 'マーク';
-comment on column verify_code_type_master.timedelta is 'タイムデルタ';
-comment on column verify_code_type_master.created is '作成日付';
-comment on column verify_code_type_master.updated is '更新日付';
 
 comment on table verify_codes is '検証コード';
 comment on column verify_codes.id is 'ID';
@@ -493,3 +331,4 @@ comment on column users.user_name is 'ユーザー名';
 comment on column users.status is 'スターテス';
 comment on column users.created is '作成日付';
 comment on column users.updated is '更新日付';
+
